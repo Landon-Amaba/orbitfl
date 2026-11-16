@@ -1,0 +1,47 @@
+# MCFL distance-threshold sweep.
+#
+# In the efficiency experiment, similarity clustering with d_th = 1.0 put all
+# 180 satellites into one cluster. This sweep lowers d_th to see whether the
+# strategy then forms several clusters, and what happens to accuracy and
+# overhead when it does. Every value in the grid below is reported.
+#
+# update_reference = round_start measures updates the way the MCFL paper
+# defines them. The efficiency experiment used the default (last_global), so
+# its runs are not the d_th = 1.0 cell of this grid; this sweep has its own.
+#
+# For comparison with the other strategies, use seeds 0-4 of the ephemeris,
+# plane and random_churn runs in results/efficiency/ (same trace, round budget,
+# sync interval and seeds).
+#
+# 5 thresholds x 2 values of R x 5 seeds = 50 tasks, one seed per task.
+#
+# Usage (SLURM, CPU only):
+#   python scripts/slurm_submit.py configs/sweeps/mcfl_threshold_sweep.yaml \
+#       --trace data/traces/leo180 --out results/ \
+#       --account <group> --qos <group> \
+#       --conda-env-path /path/to/conda/envs/orbitfl \
+#       --partition <partition> --gpus 0 --cpus 2 --mem 16G --time 12:00:00 | sbatch
+
+experiment:
+  name: mcfl_threshold
+  delta_steps: 4
+
+fl:
+  round_budget: 300
+  round_duration_s: 300
+  local_epochs: 1
+  participation_rate: 1.0
+  eval_interval: 10
+  strategy:
+    name: similarity
+    params:
+      T_init: 10
+      gamma: 0.5
+      update_reference: round_start
+
+sweep:
+  fl.strategy.params.d_th: [1.0, 0.7, 0.5, 0.3, 0.1]
+  # null means cluster once and never re-cluster (R = infinity)
+  fl.strategy.params.recluster_every_R: [20, null]
+  fl.sync_interval: [20]
+  experiment.seeds: [[0], [1], [2], [3], [4]]

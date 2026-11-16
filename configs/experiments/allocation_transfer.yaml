@@ -1,0 +1,7 @@
+# Placeholder for an experiment on how forecast quality affects channel
+# allocation. The experiment was not run for the thesis and no script reads
+# this file.
+
+experiment:
+  name: allocation_transfer
+  seeds: [0, 1, 2, 3, 4]

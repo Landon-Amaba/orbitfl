@@ -1,0 +1,97 @@
+# Base configuration: the 180-satellite constellation and four-region world of
+# the thesis. Every experiment and sweep config is merged on top of this file.
+
+seed: 5
+
+sim:
+  timestep_s: 15
+  duration_h: 24
+  epoch: "2026-09-01T00:00:00Z"
+
+constellation:
+  source: walker
+  leo:
+    n_planes: 12       # 12 planes x 15 satellites = 180 LEOs
+    sats_per_plane: 15
+    alt_km: 550.0
+    inc_deg: 53.0
+    phasing_f: 1       # Walker-delta phasing factor
+  meo:
+    n: 4               # one MEO aggregator per 90 deg of RAAN
+    period_h: 5.8      # about 10,000 km altitude
+    inc_deg: 45.0
+  isl_max_range_km: 5000.0  # reaches in-plane neighbours (about 2879 km) and the
+                            # nearest satellites in adjacent planes
+
+world:
+  n_channels: 32
+  flip_noise: 0.05     # probability that an observed channel state is flipped
+  beam_half_cone_deg: 20.0  # gives a footprint radius of about 201 km
+  regions:
+    # Dwell times are chosen so that p_on + p_off is about 0.2 per 15 s step in
+    # every region, which gives a lag-4 autocorrelation r4 of about 0.4, while
+    # the stationary occupancy p_off / (p_on + p_off) matches `occupancy`.
+    # p_on = dt / mean_on_s is the busy-to-idle probability and
+    # p_off = dt / mean_off_s the idle-to-busy probability.
+    - name: dense_terrestrial_europe
+      lat_min: 35.0
+      lat_max: 70.0
+      lon_min: -10.0
+      lon_max: 40.0
+      occupancy: [0.7]
+      mean_on_s: [240.0]   # p_on = 0.0625
+      mean_off_s: [100.0]  # p_off = 0.150
+    - name: sparse_maritime_atlantic
+      lat_min: 20.0
+      lat_max: 60.0
+      lon_min: -60.0
+      lon_max: -10.0
+      occupancy: [0.2]
+      mean_on_s: [90.0]    # p_on = 0.167
+      mean_off_s: [360.0]  # p_off = 0.042
+    - name: moderate_north_america
+      lat_min: 25.0
+      lat_max: 65.0
+      lon_min: -130.0
+      lon_max: -60.0
+      occupancy: [0.5]
+      mean_on_s: [150.0]   # p_on = 0.100
+      mean_off_s: [150.0]  # p_off = 0.100
+    - name: quiet_oceans_poles   # last region: also used for points in no other box
+      lat_min: -90.0
+      lat_max: 25.0
+      lon_min: -180.0
+      lon_max: 180.0
+      occupancy: [0.1]
+      mean_on_s: [80.0]    # p_on = 0.1875
+      mean_off_s: [720.0]  # p_off = 0.0208
+
+model:
+  window: 16
+  hidden: 64
+  use_position: true
+
+fl:
+  round_duration_s: 300  # 20 timesteps per round; 300 rounds span slightly more
+                         # than the 24 h trace
+  round_budget: 300
+  local_epochs: 1
+  local_lr: 0.001
+  local_batch: 128
+  sync_interval: 1
+  participation_rate: 1.0
+  strategy:
+    name: ephemeris
+    params: {}
+
+allocation:
+  threshold_db: -6.0
+  elevation_mask_deg: 12.0
+  theta: 0.5
+  peering: true
+  n_channels: 32
+
+experiment:
+  name: base
+  seeds: [0]
+  delta_steps: 4

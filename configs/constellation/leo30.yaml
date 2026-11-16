@@ -1,0 +1,21 @@
+# 30-satellite constellation: 6 planes x 5 satellites and 4 MEOs, at the same
+# altitude and inclination as the 180-satellite constellation of base.yaml.
+# Used for the 30-satellite concept-shift sweeps, which are about six times
+# cheaper per round than the 180-satellite ones.
+#
+# Generate the trace:
+#   python scripts/make_trace.py --config configs/base.yaml \
+#       --override configs/constellation/leo30.yaml --out data/traces/leo30
+
+constellation:
+  source: walker
+  leo:
+    n_planes: 6
+    sats_per_plane: 5
+    alt_km: 550.0
+    inc_deg: 53.0
+    phasing_f: 1
+  meo:
+    n: 4
+    period_h: 5.8
+    inc_deg: 45.0

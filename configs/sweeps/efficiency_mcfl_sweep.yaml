@@ -1,0 +1,44 @@
+# Efficiency experiment, similarity (MCFL) strategy.
+#
+# Runs similarity clustering for four re-cluster periods R at sync_interval 20
+# on the 180-satellite trace. Paired with efficiency_sweep.yaml: both use the
+# same experiment.name, so compare_arms.py reads results/efficiency/ as one
+# four-strategy comparison.
+#
+# The strategy uses its default update_reference ("last_global"). With
+# d_th = 1.0 it placed all 180 satellites in a single cluster at every
+# clustering in the thesis runs; see mcfl_threshold_sweep.yaml for smaller
+# thresholds.
+#
+# 4 values of R x 10 seeds = 40 tasks, one seed per task (see
+# efficiency_sweep.yaml for how seeds are swept).
+#
+# Usage (SLURM):
+#   python scripts/slurm_submit.py configs/sweeps/efficiency_mcfl_sweep.yaml \
+#       --trace data/traces/leo180 --out results/ \
+#       --account <group> --qos <group> \
+#       --conda-env-path /path/to/conda/envs/orbitfl \
+#       --partition <partition> --gpus 1 --mem 32G --time 12:00:00 | sbatch
+
+experiment:
+  name: efficiency
+  delta_steps: 4
+
+fl:
+  round_budget: 300
+  round_duration_s: 300
+  local_epochs: 1
+  participation_rate: 1.0
+  eval_interval: 10        # evaluate every 10 rounds and on the final round
+  strategy:
+    name: similarity
+    params:
+      T_init: 10
+      gamma: 0.5
+      d_th: 1.0
+
+sweep:
+  # null means cluster once and never re-cluster (R = infinity)
+  fl.strategy.params.recluster_every_R: [5, 10, 20, null]
+  fl.sync_interval: [20]
+  experiment.seeds: [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9]]

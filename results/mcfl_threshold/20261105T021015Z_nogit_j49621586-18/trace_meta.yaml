@@ -1,0 +1,7 @@
+config_hash: c3a976f68be11e35
+duration_s: 86400
+epoch: '2026-09-01T00:00:00Z'
+git_hash: b77ae56
+seed: 5
+timestep_s: 15
+trace_version: '1.0'

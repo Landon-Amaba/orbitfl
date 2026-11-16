@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the thesis below."
+title: "orbitfl: simulator for ground-track region-clustered federated learning"
+type: software
+version: 1.0.0
+license: MIT
+authors:
+  - family-names: Amaba
+    given-names: Landon
+preferred-citation:
+  type: thesis
+  title: "Ground-Track Region-Clustered Federated Learning (GTRFL) for Spectrum Forecasting under Data Drift"
+  authors:
+    - family-names: Amaba
+      given-names: Landon
+  thesis-type: "Honors thesis"
+  institution:
+    name: "University of Florida"
+  department: "Electrical and Computer Engineering"
+  year: 2026

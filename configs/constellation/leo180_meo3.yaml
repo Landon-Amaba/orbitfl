@@ -1,0 +1,13 @@
+# The 180-satellite constellation of base.yaml with 3 MEOs instead of 4.
+# The centralized baseline in results/centralized_baseline/ was trained on a
+# trace of this constellation.
+#
+# Generate the trace:
+#   python scripts/make_trace.py --config configs/base.yaml \
+#       --override configs/constellation/leo180_meo3.yaml --out data/traces/leo180_meo3
+
+constellation:
+  meo:
+    n: 3
+    period_h: 5.8
+    inc_deg: 45.0

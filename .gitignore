@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+dist/
+build/
+
+# Local output
+runs/
+logs/
+figures/regenerated/
+figures/constellation/
+results/checkpoint_b/
+configs/sweeps/*_runs.json
+
+# Traces are regenerated with scripts/make_trace.py (see data/traces/README.md).
+# Only the 30-satellite trace is kept in the repository.
+data/traces/*
+!data/traces/README.md
+!data/traces/leo30/
+
+# OS
+.DS_Store

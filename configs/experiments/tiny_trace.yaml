@@ -1,0 +1,12 @@
+# Very small constellation used only by tests/test_trace_golden.py.
+seed: 0
+
+sim:
+  duration_h: 1    # 240 timesteps at 15 s
+
+constellation:
+  leo:
+    n_planes: 2
+    sats_per_plane: 3  # 6 LEOs
+  meo:
+    n: 2

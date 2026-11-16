@@ -1,0 +1,21 @@
+# Settings for scripts/diag_mcfl_threshold.py, the diagnostics on results/mcfl_threshold.
+#
+# Question 1 (cluster make-up): when d_th < 1 gives more than one cluster, what
+# do the clusters look like? The number of clusters alone cannot tell real
+# groups from one large cluster plus single satellites.
+#
+# Question 2 (operating point): when every satellite is its own cluster (K = 180),
+# global BA rises while global AUC falls. Is that a move along the ROC curve
+# and not better ranking? The rule applied: call the BA gain an operating-point
+# effect if, paired by seed at round 299, the best-threshold BA at K = 180 does
+# not exceed that at K = 1 by more than the seed standard deviation at K = 1.
+
+# Thresholds scored at every replayed clustering: the grid of the sweep.
+d_th_grid: [1.0, 0.7, 0.5, 0.3, 0.1]
+
+# Label permutations for the ARI null, and the seed of the permutation stream.
+ari_null_permutations: 200
+ari_null_seed: 0
+
+# Smallest size counted as a real cluster; smaller groups count as singletons.
+min_real_cluster_size: 2

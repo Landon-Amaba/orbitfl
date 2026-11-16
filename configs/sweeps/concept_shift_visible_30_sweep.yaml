@@ -1,0 +1,70 @@
+# Concept shift, position visible to the model, 30 satellites.
+#
+# Same as concept_shift_hidden_30_sweep.yaml except model.use_position = true.
+# With the position in its input, a single model can work out the region and
+# learn each region's target itself, so region clusters are not expected to
+# help. Comparing the two sweeps shows whether the benefit of region clusters
+# comes from the shift being hidden.
+#
+# The world is replaced by a simpler one (see `world` below); the trace only
+# holds geometry and is reused.
+# The same sweep at 180 satellites is concept_shift_visible_180_sweep.yaml.
+#
+# 4 shift levels x 3 strategies x 5 seeds = 60 tasks, one seed per task.
+#
+# Usage (SLURM, CPU only):
+#   python scripts/slurm_submit.py configs/sweeps/concept_shift_visible_30_sweep.yaml \
+#       --trace data/traces/leo30 --out results/ \
+#       --account <group> --qos <group> \
+#       --conda-env-path /path/to/conda/envs/orbitfl \
+#       --partition <partition> --cpus 2 --mem 8G --time 04:00:00 | sbatch
+
+experiment:
+  name: concept_shift_visible_30
+  delta_steps: 4
+
+model:
+  use_position: true
+  hidden: 32                   # half the base width (64)
+
+world:
+  # Four equal 90 deg longitude bands with the same occupancy (0.5) and long,
+  # symmetric dwell times (p_on = p_off = 0.01 per step, r4 ~ 0.92), so the
+  # target is close to "copy the last observation". Polarity alternates by
+  # rank: with concept shift, bands 1 and 3 have inverted targets on the
+  # affected channels. The bands differ in nothing else.
+  n_channels: 8
+  regions:
+    - {name: band0, lat_min: -90.0, lat_max: 90.0, lon_min: -180.0, lon_max:  -90.0,
+       occupancy: [0.5], mean_on_s: [1500.0], mean_off_s: [1500.0]}
+    - {name: band1, lat_min: -90.0, lat_max: 90.0, lon_min:  -90.0, lon_max:    0.0,
+       occupancy: [0.5], mean_on_s: [1500.0], mean_off_s: [1500.0]}
+    - {name: band2, lat_min: -90.0, lat_max: 90.0, lon_min:    0.0, lon_max:   90.0,
+       occupancy: [0.5], mean_on_s: [1500.0], mean_off_s: [1500.0]}
+    - {name: band3, lat_min: -90.0, lat_max: 90.0, lon_min:   90.0, lon_max:  180.0,
+       occupancy: [0.5], mean_on_s: [1500.0], mean_off_s: [1500.0]}
+
+fl:
+  round_budget: 300
+  round_duration_s: 300
+  local_epochs: 3
+  local_lr: 0.03               # higher than the base 1e-3; this world is easy to fit
+  participation_rate: 1.0
+  eval_interval: 10
+  # sync_interval = round_budget: the cluster models are merged once, at the
+  # end, so each one specialises over the whole run. The global model is that
+  # single final merge.
+  sync_interval: 300
+  cluster_local_train: true    # train a cluster model only on samples collected in that cluster
+  per_sample_eval: true        # score each probe sample under the model of its own cluster
+  strategy:
+    params:
+      use_meo_proximity: false # ephemeris clusters by ground region
+
+sweep:
+  world.concept_shift: [0.0, 0.3, 0.6, 0.9]
+  fl.strategy.name:
+    - ephemeris
+    - plane
+    - random_churn
+  experiment.seeds: [[0], [1], [2], [3], [4]]

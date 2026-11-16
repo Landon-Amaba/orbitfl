@@ -1,0 +1,9 @@
+git_head: ''
+platform: Linux-5.14.0-687.42.1.el9_8.x86_64-x86_64-with-glibc2.34
+round_budget_override: null
+script_sha256: ded4bd1e8762f3c3b63f5c3d083dac3275f53ab182e47ffaada98ff0b99c06ae
+source_run: results/e1_mcfl_dth/20261105T021015Z_nogit_j49621586-1
+torch: !!python/object/new:torch.torch_version.TorchVersion
+- 2.14.0+cu130
+torch_threads: 2
+trace: data/traces/full_v2

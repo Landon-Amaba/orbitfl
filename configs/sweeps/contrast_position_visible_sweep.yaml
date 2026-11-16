@@ -1,0 +1,38 @@
+# Predictability contrast, position visible to the model.
+#
+# Same sweep as contrast_position_hidden_sweep.yaml, with model.use_position
+# left at its default (true). Both are plotted together by
+# scripts/plot_contrast_pair.py.
+#
+# 4 contrast levels x 3 strategies x 5 seeds = 60 tasks, one seed per task.
+# A task takes about 2 hours on 2 CPU cores.
+#
+# Usage (SLURM, CPU only):
+#   python scripts/slurm_submit.py configs/sweeps/contrast_position_visible_sweep.yaml \
+#       --trace data/traces/leo180 --out results/ \
+#       --account <group> --qos <group> \
+#       --conda-env-path /path/to/conda/envs/orbitfl \
+#       --partition <partition> --cpus 2 --mem 8G --time 04:00:00 | sbatch
+
+experiment:
+  name: contrast_position_visible
+  delta_steps: 4
+
+fl:
+  round_budget: 300
+  round_duration_s: 300
+  local_epochs: 1
+  participation_rate: 1.0
+  eval_interval: 10
+  sync_interval: 20
+  strategy:
+    params:
+      use_meo_proximity: false   # ephemeris clusters by ground region
+
+sweep:
+  world.predictability_contrast: [0.0, 0.3, 0.6, 0.9]
+  fl.strategy.name:
+    - ephemeris
+    - plane
+    - random_churn
+  experiment.seeds: [[0], [1], [2], [3], [4]]

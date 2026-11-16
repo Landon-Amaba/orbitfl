@@ -1,0 +1,11 @@
+# Settings for scripts/train_centralized.py (centralized baseline, Checkpoint C).
+
+experiment:
+  name: centralized_baseline
+  seeds: [0, 1, 2, 3, 4]
+  delta_steps: 4
+
+model:
+  window: 16
+  hidden: 64
+  use_position: true

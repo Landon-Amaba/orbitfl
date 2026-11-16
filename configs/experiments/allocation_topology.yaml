@@ -1,0 +1,10 @@
+# Placeholder for a channel-allocation experiment (allocation under different
+# clusterings, with boundary reconciliation). The experiment was not run for
+# the thesis and no script reads this file.
+
+experiment:
+  name: allocation_topology
+  seeds: [0, 1, 2, 3, 4]
+
+allocation:
+  peering: true

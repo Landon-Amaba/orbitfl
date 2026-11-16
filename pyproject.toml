@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "orbitfl"
+version = "1.0.0"
+description = "Simulator for clustered federated learning over a LEO/MEO satellite constellation"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Landon Amaba" }]
+requires-python = ">=3.11"
+dependencies = ["pyyaml>=6"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.4"]
+full = [
+    "numpy",
+    "scipy",
+    "pandas",
+    "pyarrow",
+    "matplotlib",
+    "plotly>=5.20",
+    "pillow",
+    "networkx",
+    "scikit-learn",
+    "torch",
+    "skyfield",
+    "sgp4",
+    "tqdm",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"orbitfl.viz" = ["assets/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+
+[tool.ruff.lint.per-file-ignores]
+# Scripts add src/ to sys.path before importing orbitfl.
+"scripts/*.py" = ["E402", "I001"]

@@ -1,0 +1,43 @@
+# Efficiency experiment, geometry-based strategies.
+#
+# Compares ephemeris (ground-region clusters, GTRFL in the thesis), plane and
+# random_churn at sync_interval 20 on the 180-satellite trace. The similarity
+# (MCFL) runs of the same experiment are in efficiency_mcfl_sweep.yaml; both
+# files use the same experiment.name, so all runs land in results/efficiency/.
+#
+# 3 strategies x 10 seeds = 30 tasks, one seed per task.
+#
+# Seeds are swept through experiment.seeds, one single-element list per task.
+# Do not sweep the top-level `seed`: it only seeds client sampling and leaves
+# the model and world seeds unchanged, so the runs would be identical.
+#
+# Usage (SLURM):
+#   python scripts/slurm_submit.py configs/sweeps/efficiency_sweep.yaml \
+#       --trace data/traces/leo180 --out results/ \
+#       --account <group> --qos <group> \
+#       --conda-env-path /path/to/conda/envs/orbitfl \
+#       --partition <partition> --gpus 1 --mem 32G --time 12:00:00 | sbatch
+# One seed takes roughly 0.5 to 2 hours on a GPU.
+
+experiment:
+  name: efficiency
+  delta_steps: 4
+
+fl:
+  round_budget: 300
+  round_duration_s: 300    # 20 trace timesteps per round
+  local_epochs: 1
+  participation_rate: 1.0
+  eval_interval: 10        # evaluate every 10 rounds and on the final round
+  strategy:
+    params:
+      use_meo_proximity: false  # ephemeris clusters by ground region;
+                                # plane and random_churn ignore this parameter
+
+sweep:
+  fl.strategy.name:
+    - ephemeris
+    - plane
+    - random_churn
+  fl.sync_interval: [20]
+  experiment.seeds: [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9]]
